@@ -1,0 +1,20 @@
+---
+- name: Deploy WAR file to Tomcat web server
+  hosts: web
+  become: yes
+  tasks:
+    - name: Copy WAR file to Tomcat
+      copy:
+        src: "/var/snap/jenkins/4865/workspace/mvnweb/target/mvnweb.war"
+        dest: "/opt/tomcat/webapps/mvnweb.war"
+        remote_src: no
+
+- name: Restart Tomcat server
+  hosts: tomcat
+  become: yes
+  tasks:
+    - name: Restart Tomcat manually
+      ansible.builtin.shell: |
+        /opt/tomcat/bin/shutdown.sh || true
+        sleep 5
+        /opt/tomcat/bin/startup.sh
